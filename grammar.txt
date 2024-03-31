@@ -1,49 +1,49 @@
 Prog --> ListaDecl
 
 ListaDecl --> DeclVar ListaDecl
-        | DeclFun ListaDecl
-        | vazio
+            | DeclFun ListaDecl
+            | vazio
 
 DeclVar --> Tipo ListaIdent ';'
-        | vazio
+          | vazio
 
 Tipo --> int | double | boolean
 
 ListaIdent --> IDENT , ListaIdent  
-        | IDENT      
+             | IDENT      
 
 DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' '{' DeclVar ListaCmd '}'
-        | vazio
+          | vazio
 
 TipoOuVoid --> Tipo | VOID
 
 FormalPar --> ParamList
-        | vazio
+            | vazio
 
 ParamList --> Tipo IDENT , ParamList
-        | Tipo IDENT
+            | Tipo IDENT
 
 Bloco --> { ListaCmd }
 
 ListaCmd --> Cmd ListaCmd
-        | vazio
+           | vazio
 
 Cmd --> Bloco
-| while ( E ) Cmd
-| IDENT = E ;
-| if ( E ) Cmd RestoIf
+      | while ( E ) Cmd
+      | IDENT = E ;
+      | if ( E ) Cmd RestoIf
 
-RestoIf -> else Cmd
-        | vazio
+RestoIf --> else Cmd
+          | vazio
 
 E --> E + T
-| E - T
-| T
+    | E - T
+    | T
 
 T --> T * F
-| T / F
-| F    
+    | T / F
+    | F    
 
 F --> IDENT
-| NUM
-| ( E )
+    | NUM
+    | ( E )

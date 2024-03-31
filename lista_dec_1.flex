@@ -35,7 +35,7 @@ WHITE_SPACE_CHAR=[\n\r\ \t\b\012]
 
 [:jletter:][:jletterdigit:]* { return ListaDec1.IDENT; }  
 
-[0-9]+ 	{ return ListaDec1.NUM; }
+[0-9]+(\.[0-9]*)* { return ListaDec1.NUM; }
 
 "{" |
 "}" |

@@ -24,9 +24,9 @@ public class ListaDec1 {
     "IF",
     "ELSE",
     "FUNC",
-    "int",
-    "double",
-    "boolean",
+    "INT",
+    "DOUBLE",
+    "BOOLEAN",
     "VOID",
   };
                                       
@@ -127,6 +127,8 @@ public class ListaDec1 {
       debug("Tipo --> boolean");
       
       verifica(BOOLEAN);
+    } else {
+      yyerror("Esperado int, double ou boolean");
     }
   }
 
@@ -234,44 +236,48 @@ public class ListaDec1 {
   private void E() {
     if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
       T();
-    } 
-    
-    if ((laToken == '+') || (laToken == '-')) {
-      if (laToken == '+') {        
-        debug("E --> E + T");
 
-        verifica('+');
-        T();
-      } else if (laToken == '-') {        
-        debug("E --> E - T");
+      if ((laToken == '+') || (laToken == '-')) {
+        if (laToken == '+') {        
+          debug("E --> E + T");
 
-        verifica('-');
-        T();
+          verifica('+');
+          T();
+        } else if (laToken == '-') {        
+          debug("E --> E - T");
+
+          verifica('-');
+          T();
+        }
+      } else {
+        debug("E --> T");
       }
-    } else {      
-      debug("E --> T");
+    } else {
+      yyerror("Esperado operando (, identificador ou numero");
     }
   }
 
   private void T() {
     if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
       F();
-    } 
     
-    if ((laToken == '*') || (laToken == '/')) {
-      if (laToken == '*') {        
-        debug("T --> T * F");
+      if ((laToken == '*') || (laToken == '/')) {
+        if (laToken == '*') {        
+          debug("T --> T * F");
 
-        verifica('*');
-        F();
-      } else if (laToken == '/') {        
-        debug("T --> T / F");
+          verifica('*');
+          F();
+        } else if (laToken == '/') {        
+          debug("T --> T / F");
 
-        verifica('/');
-        F();
+          verifica('/');
+          F();
+        }
+      } else {      
+        debug("T --> F");
       }
-    } else {      
-      debug("T --> F");
+    } else {
+      yyerror("Esperado operando (, identificador ou numero");
     }
   }
 
