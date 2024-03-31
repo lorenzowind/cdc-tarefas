@@ -49,58 +49,6 @@ public class ListaDec1 {
     }
   }
 
-  /***** Gramática original 
-  Prog --> ListaDecl
-
-  ListaDecl --> DeclVar ListaDecl
-              | DeclFun ListaDecl
-              | vazio
-
-  DeclVar --> Tipo ListaIdent ';'
-            | vazio
-
-  Tipo --> int | double | boolean
-
-  ListaIdent --> IDENT , ListaIdent  
-               | IDENT      
-
-  DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' '{' DeclVar ListaCmd '}'
-              | vazio
-
-  TipoOuVoid --> Tipo | VOID
-
-  FormalPar --> ParamList
-              | vazio
-
-  ParamList --> Tipo IDENT , ParamList
-              | Tipo IDENT
-
-  Bloco --> { ListaCmd }
-
-  ListaCmd --> Cmd ListaCmd
-             | vazio
-
-  Cmd --> Bloco
-        | while ( E ) Cmd
-        | IDENT = E ;
-        | if ( E ) Cmd RestoIf
-
-  RestoIf -> else Cmd
-           | vazio
-
-  E --> E + T
-      | E - T
-      | T
-
-  T --> T * F
-      | T / F
-      | F    
-      
-  F --> IDENT
-      | NUM
-      | ( E )
-  ***/ 
-
   private void Prog() {    
     System.out.println("Prog --> ListaDecl");
 

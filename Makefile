@@ -3,13 +3,13 @@ JAVAC  = javac
 
 # targets:
 
-all: AsdrSample.class
+all: ListaDec1.class
 
 clean:
 	rm -f *~ *.class Yylex.java
 
-AsdrSample.class: AsdrSample.java Yylex.java
-	$(JAVAC) AsdrSample.java
+ListaDec1.class: ListaDec1.java Yylex.java
+	$(JAVAC) ListaDec1.java
 
-Yylex.java: asdr_lex.flex
-	$(JFLEX) asdr_lex.flex
+Yylex.java: lista_dec_1.flex
+	$(JFLEX) lista_dec_1.flex
