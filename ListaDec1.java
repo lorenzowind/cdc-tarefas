@@ -43,6 +43,12 @@ public class ListaDec1 {
       lexer = new Yylex (r, this);
   }
 
+  private void debug(String x) {  
+    if (debug) {
+      System.out.println(x);
+    }
+  }
+
   /***** Gramática original 
   Prog --> ListaDecl
 
@@ -63,7 +69,8 @@ public class ListaDec1 {
 
   TipoOuVoid --> Tipo | VOID
 
-  FormalPar -> ParamList
+  FormalPar --> ParamList
+              | vazio
 
   ParamList --> Tipo IDENT , ParamList
               | Tipo IDENT
@@ -94,30 +101,22 @@ public class ListaDec1 {
       | ( E )
   ***/ 
 
-  private void Prog() {
-    if (debug) {
-      System.out.println("Prog --> ListaDecl");
-    }
+  private void Prog() {    
+    System.out.println("Prog --> ListaDecl");
 
     ListaDecl();
   }
 
   private void ListaDecl() {
-    if (laToken == FUNC) {
-      if (debug) {
-        System.out.println("ListaDecl --> DeclFun ListaDecl");
-      }
+    if (laToken == FUNC) {      
+      debug("ListaDecl --> DeclFun ListaDecl");
       
       DeclFun();
       ListaDecl();
-    } else if (laToken == Yylex.YYEOF) {
-      if (debug) {
-        System.out.println("ListaDecl --> vazio");
-      }
-    } else {
-      if (debug) {
-        System.out.println("ListaDecl --> DeclVar ListaDecl");
-      }
+    } else if (laToken == Yylex.YYEOF) {      
+      debug("ListaDecl --> vazio");
+    } else {      
+      debug("ListaDecl --> DeclVar ListaDecl");
 
       DeclVar();
       ListaDecl();
@@ -125,26 +124,20 @@ public class ListaDec1 {
   }
 
   private void DeclVar() {
-    if ((laToken == INT) || (laToken == DOUBLE) || (laToken == BOOLEAN)) {
-      if (debug) {
-        System.out.println("DeclVar --> Tipo ListaIdent ';'");
-      }
+    if ((laToken == INT) || (laToken == DOUBLE) || (laToken == BOOLEAN)) {      
+      debug("DeclVar --> Tipo ListaIdent ';'");
       
       Tipo();
       ListaIdent();
       verifica(';');
-    } else {
-      if (debug) {
-        System.out.println("DeclVar --> vazio");
-      }
+    } else {      
+      debug("DeclVar --> vazio");
     }
   }
 
   private void DeclFun() {
-    if (laToken == FUNC) {
-      if (debug) {
-        System.out.println("DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' '{' DeclVar ListaCmd '}'");
-      }
+    if (laToken == FUNC) {      
+      debug("DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' '{' DeclVar ListaCmd '}'");
       
       verifica(FUNC);
       TipoOuVoid();
@@ -156,98 +149,78 @@ public class ListaDec1 {
       DeclVar();
       ListaCmd();
       verifica('}');
-    } else {
-      if (debug) {
-        System.out.println("DeclFun --> vazio");
-      }
+    } else {      
+      debug("DeclFun --> vazio");
     }
   }
 
   private void TipoOuVoid() {
-    if (laToken == VOID) {
-      if (debug) {
-        System.out.println("TipoOuVoid --> VOID");
-      }
+    if (laToken == VOID) {      
+      debug("TipoOuVoid --> VOID");
       
       verifica(VOID);
-    } else {
-      if (debug) {
-        System.out.println("TipoOuVoid --> Tipo");
-      }
+    } else {      
+      debug("TipoOuVoid --> Tipo");
 
       Tipo();
     }
   }
 
   private void Tipo() {
-    if (laToken == INT) {
-      if (debug) {
-        System.out.println("Tipo --> int");
-      }
+    if (laToken == INT) {      
+      debug("Tipo --> int");
 
       verifica(INT);
-    } else if (laToken == DOUBLE) {
-      if (debug) {
-        System.out.println("Tipo --> double");
-      }
+    } else if (laToken == DOUBLE) {      
+      debug("Tipo --> double");
       
       verifica(DOUBLE);
-    } else if (laToken == BOOLEAN) {
-      if (debug) {
-        System.out.println("Tipo --> boolean");
-      }
+    } else if (laToken == BOOLEAN) {      
+      debug("Tipo --> boolean");
       
       verifica(BOOLEAN);
     }
   }
 
   private void FormalPar() {
-    if (debug) {
-      System.out.println("FormalPar -> ParamList");
-    }
+    if (laToken == ')') {      
+      debug("FormalPar -> vazio");
+    } else {      
+      debug("FormalPar -> ParamList");
 
-    ParamList();
+      ParamList();
+    }
   }
 
   private void ParamList() {
     Tipo();
     verifica(IDENT);
 
-    if (laToken == ',') {
-      if (debug) {
-        System.out.println("ParamList -> Tipo IDENT , ParamList");
-      }
+    if (laToken == ',') {      
+      debug("ParamList -> Tipo IDENT , ParamList");
 
       verifica(',');
       ParamList();
-    } else {
-      if (debug) {
-        System.out.println("ParamList -> Tipo IDENT");
-      }
+    } else {      
+      debug("ParamList -> Tipo IDENT");
     }
   }
 
   private void ListaIdent() {
     verifica(IDENT);
 
-    if (laToken == ',') {
-      if (debug) {
-        System.out.println("ListaIdent --> IDENT , ListaIdent");
-      }
+    if (laToken == ',') {      
+      debug("ListaIdent --> IDENT , ListaIdent");
     
       verifica(',');
       ListaIdent();
-    } else {
-      if (debug) {
-        System.out.println("ListaIdent --> IDENT");
-      }
+    } else {      
+      debug("ListaIdent --> IDENT");
     }
   }
 
-  private void Bloco() {
-    if (debug) {
-      System.out.println("Bloco --> { Cmd }");
-    }
+  private void Bloco() {    
+    debug("Bloco --> { Cmd }");
 
     verifica('{');
     ListaCmd();
@@ -255,50 +228,38 @@ public class ListaDec1 {
   }
 
   private void ListaCmd() {
-    if ((laToken == '{') || (laToken == WHILE) || (laToken == IDENT) || (laToken == IF)) {
-      if (debug) {
-        System.out.println("ListaCmd --> Cmd ListaCmd");
-      }
+    if ((laToken == '{') || (laToken == WHILE) || (laToken == IDENT) || (laToken == IF)) {      
+      debug("ListaCmd --> Cmd ListaCmd");
 
       Cmd();
       ListaCmd();
-    } else {
-      if (debug) {
-        System.out.println("ListaCmd --> vazio");
-      }
+    } else {      
+      debug("ListaCmd --> vazio");
     }
   }
 
   private void Cmd() {
-    if (laToken == '{') {
-      if (debug) {
-        System.out.println("Cmd --> Bloco");
-      }
+    if (laToken == '{') {      
+      debug("Cmd --> Bloco");
 
       Bloco();
-	  } else if (laToken == WHILE) {
-      if (debug) {
-        System.out.println("Cmd --> WHILE ( E ) Cmd");
-      }
+	  } else if (laToken == WHILE) {      
+      debug("Cmd --> WHILE ( E ) Cmd");
       
       verifica(WHILE); // laToken = this.yylex(); 
   		verifica('(');
   		E();
       verifica(')');
       Cmd();
-	  } else if (laToken == IDENT) {
-      if (debug) {
-        System.out.println("Cmd --> IDENT = E ;");
-      }
+	  } else if (laToken == IDENT) {      
+      debug("Cmd --> IDENT = E ;");
       
       verifica(IDENT);  
       verifica('='); 
       E();
 		  verifica(';');
-	  } else if (laToken == IF) {
-      if (debug) {
-        System.out.println("Cmd --> if (E) Cmd RestoIF");
-      }
+	  } else if (laToken == IF) {      
+      debug("Cmd --> if (E) Cmd RestoIF");
       
       verifica(IF);
       verifica('(');
@@ -312,93 +273,71 @@ public class ListaDec1 {
   }
 
   private void RestoIF() {
-    if (laToken == ELSE) {
-      if (debug) {
-        System.out.println("RestoIF --> else Cmd");
-      }
+    if (laToken == ELSE) {      
+      debug("RestoIF --> else Cmd");
       
       verifica(ELSE);
       Cmd();
-	  } else {
-      if (debug) {
-        System.out.println("RestoIF --> vazio");
-      }
+	  } else {      
+      debug("RestoIF --> vazio");
     }
   }
 
   private void E() {
     if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
-      if (debug) {
-        System.out.println("E --> T");
-      }
-
       T();
-    } else {
-      E();
-
-      if (laToken == '+') {
-        if (debug) {
-          System.out.println("E --> E + T");
-        }
+    } 
+    
+    if ((laToken == '+') || (laToken == '-')) {
+      if (laToken == '+') {        
+        debug("E --> E + T");
 
         verifica('+');
         T();
-      } else if (laToken == '-') {
-        if (debug) {
-          System.out.println("E --> E - T");
-        }
+      } else if (laToken == '-') {        
+        debug("E --> E - T");
 
         verifica('-');
         T();
       }
+    } else {      
+      debug("E --> T");
     }
   }
 
   private void T() {
     if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
-      if (debug) {
-        System.out.println("T --> F");
-      }
-
       F();
-    } else {
-      T();
-
-      if (laToken == '*') {
-        if (debug) {
-          System.out.println("T --> T * F");
-        }
+    } 
+    
+    if ((laToken == '*') || (laToken == '/')) {
+      if (laToken == '*') {        
+        debug("T --> T * F");
 
         verifica('*');
         F();
-      } else if (laToken == '/') {
-        if (debug) {
-          System.out.println("T --> T / F");
-        }
+      } else if (laToken == '/') {        
+        debug("T --> T / F");
 
         verifica('/');
         F();
       }
+    } else {      
+      debug("T --> F");
     }
   }
 
   private void F() {
-    if (laToken == IDENT) {
-      if (debug) {
-        System.out.println("F --> IDENT");
-      }
+    if (laToken == IDENT) {      
+      debug("F --> IDENT");
       
       verifica(IDENT);
 	  } else if (laToken == NUM) {
-      if (debug) {
-        System.out.println("F --> NUM");
-      }
+      debug("F --> NUM");
       
       verifica(NUM);
 	  } else if (laToken == '(') {
-      if (debug) {
-        System.out.println("F --> ( E )");
-      }
+      debug("F --> ( E )");
       
       verifica('(');
       E();        
