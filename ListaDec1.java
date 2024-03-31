@@ -100,6 +100,8 @@ public class ListaDec1 {
     }
 
     ListaDecl();
+    verifica(Yylex.YYEOF);
+
   }
 
   private void ListaDecl() {
@@ -110,17 +112,20 @@ public class ListaDec1 {
       
       DeclFun();
       ListaDecl();
-    } else if (laToken == Yylex.YYEOF) {
+    } else if (laToken == INT || laToken == DOUBLE || laToken == BOOLEAN) {
       if (debug) {
-        System.out.println("ListaDecl --> vazio");
+        System.out.println("ListaDecl --> DeclVar ListaDecl");
+        DeclVar();
+        ListaDecl();
+
       }
     } else {
       if (debug) {
-        System.out.println("ListaDecl --> DeclVar ListaDecl");
+        System.out.println("ListaDecl --> vazio");
+
       }
 
-      DeclVar();
-      ListaDecl();
+      
     } 
   }
 
@@ -327,15 +332,7 @@ public class ListaDec1 {
   }
 
   private void E() {
-    if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
-      if (debug) {
-        System.out.println("E --> T");
-      }
-
       T();
-    } else {
-      E();
-
       if (laToken == '+') {
         if (debug) {
           System.out.println("E --> E + T");
@@ -352,18 +349,9 @@ public class ListaDec1 {
         T();
       }
     }
-  }
 
   private void T() {
-    if ((laToken == IDENT) || (laToken == NUM) || (laToken == '(')) {
-      if (debug) {
-        System.out.println("T --> F");
-      }
-
       F();
-    } else {
-      T();
-
       if (laToken == '*') {
         if (debug) {
           System.out.println("T --> T * F");
@@ -380,7 +368,6 @@ public class ListaDec1 {
         F();
       }
     }
-  }
 
   private void F() {
     if (laToken == IDENT) {
