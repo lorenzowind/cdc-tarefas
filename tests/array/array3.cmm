@@ -1,0 +1,11 @@
+int[] vetor;
+int a;
+
+func int add(int a, int b){
+    return a + b;
+}
+
+func void test(){
+    vetor[0] = add(1,2);
+    a = vetor[0];
+}

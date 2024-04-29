@@ -2,6 +2,6 @@ int[] vetor;
 int a;
 
 func void test(){
-    vetor[0] = 2;
+    vetor[0] = 2 + 2;
     a = vetor[0];
 }
