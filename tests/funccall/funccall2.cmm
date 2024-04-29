@@ -1,0 +1,10 @@
+$TRACE_ON
+func void test() {
+    foo();
+    foo ();
+    foo(1);
+    a = foo(1,2);
+    return foo(1,2);
+    return foo(foo());
+    return foo(foo(foo(1,1+1,1*3)));
+}

@@ -77,11 +77,20 @@ Cmd : Bloco
     | IF '(' E ')' Cmd RestoIf
     | RETURN E ';'
     | RETURN ';'
+    | FuncCall ';'
     ;
 
 RestoIf : ELSE Cmd
         |
         ;
+
+FuncCall : ident '(' ExprList ')'
+         ;
+
+ExprList : E ',' ExprList
+         | E
+         |
+         ;
 
 E : E OR E
   | E AND E
@@ -105,6 +114,7 @@ F : '(' E ')'
   | NOT F
   | ident
   | num
+  | FuncCall
   ;
 
 %%
