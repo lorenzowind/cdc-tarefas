@@ -27,15 +27,21 @@ ListaDecl : Decl
 
 Decl : DeclVar ListaDecl
      | DeclFun ListaDecl
+     | DeclIndex ListaDecl
      ;
 
 DeclVar : Tipo ListaIdent ';'
         ;
 
+DeclIndex : Tipo '[' ']' ListaIdent ';'
+          ;
+
 Tipo : INT
      | DOUBLE
      | BOOLEAN
      ;
+
+
 
 ListaIdent : ident ',' ListaIdent
            | ident
@@ -74,6 +80,7 @@ ListaCmd : Cmd ListaCmd
 Cmd : Bloco
     | WHILE '(' E ')' Cmd
     | ident '=' E ';'
+    | ident '[' num ']' '=' E ';'
     | IF '(' E ')' Cmd RestoIf
     | RETURN E ';'
     | RETURN ';'
@@ -113,6 +120,7 @@ T : T '*' T
 F : '(' E ')'
   | NOT F
   | ident
+  | ident '[' num ']'
   | num
   | FuncCall
   ;
