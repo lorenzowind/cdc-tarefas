@@ -1,41 +1,37 @@
 // Leonardo Vargas, Lorenzo Windmoller, Osmar Sadi
-
 %%
 
-%{
-  private ListaDec1 yyparser;
+%byaccj
 
-  public Yylex(java.io.Reader r, ListaDec1 yyparser) {
+%{
+  private Parser yyparser;
+
+  public Yylex(java.io.Reader r, Parser yyparser) {
     this(r);
     this.yyparser = yyparser;
   }
-%} 
+%}
 
-%integer
-%line
-%char
-
-WHITE_SPACE_CHAR=[\n\r\ \t\b\012]
+NL  = \n | \r | \r\n
 
 %%
 
-"$TRACE_ON"   { yyparser.setDebug(true); }
-"$TRACE_OFF"  { yyparser.setDebug(false); }
+"$TRACE_ON"  { yyparser.setDebug(true);  }
+"$TRACE_OFF" { yyparser.setDebug(false); }
 
-"while"	  { return ListaDec1.WHILE; }
-"if"		  { return ListaDec1.IF; }
-"else"	  { return ListaDec1.ELSE; }
+"while"	  { return Parser.WHILE; }
+"if"		  { return Parser.IF; }
+"else"	  { return Parser.ELSE; }
 
-"int"	    { return ListaDec1.INT; }
-"double"  { return ListaDec1.DOUBLE; }
-"boolean" { return ListaDec1.BOOLEAN; }
+"int"	    { return Parser.INT; }
+"double"  { return Parser.DOUBLE; }
+"boolean" { return Parser.BOOLEAN; }
 
-"func"	  { return ListaDec1.FUNC; }
-"void"    { return ListaDec1.VOID; }
+"func"	  { return Parser.FUNC; }
+"void"    { return Parser.VOID; }
 
-[:jletter:][:jletterdigit:]* { return ListaDec1.IDENT; }  
-
-[0-9]+(\.[0-9]*)* { return ListaDec1.NUM; }
+[0-9]+ { return Parser.num;}
+[a-zA-Z][a-zA-Z0-9]* { return Parser.ident;}
 
 "{" |
 "}" |
@@ -49,6 +45,7 @@ WHITE_SPACE_CHAR=[\n\r\ \t\b\012]
 "/" |
 "="    { return yytext().charAt(0); } 
 
-{WHITE_SPACE_CHAR}+ { }
+[ \t]+ { }
+{NL}+  { }
 
-. { System.out.println("Erro lexico: caracter invalido: <" + yytext() + ">"); }
+.    { System.err.println("Error: unexpected character '"+yytext()+"' na linha "+yyline); return YYEOF; }
