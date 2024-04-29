@@ -36,8 +36,16 @@ ListaIdent : ident ',' ListaIdent
 DeclFun : FUNC TipoOuVoid ident '(' FormalPar ')' Bloco
         ;
 
-Bloco : '{' DeclVar ListaCmd '}'
+Bloco : '{' DeclVarOpt ListaCmdOpt '}'
       ;
+
+DeclVarOpt : DeclVar ListaDecl
+           |
+           ;
+
+ListaCmdOpt : ListaCmd
+            |
+            ;
 
 TipoOuVoid : Tipo
            | VOID
