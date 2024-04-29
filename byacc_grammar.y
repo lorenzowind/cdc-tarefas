@@ -5,6 +5,7 @@
 
 %token INT DOUBLE BOOLEAN VOID FUNC WHILE IF ELSE num ident
 %token AND OR NOT EQ NEQ LT LE GT GE
+%token RETURN
 
 %left OR
 %left AND
@@ -74,6 +75,8 @@ Cmd : Bloco
     | WHILE '(' E ')' Cmd
     | ident '=' E ';'
     | IF '(' E ')' Cmd RestoIf
+    | RETURN E ';'
+    | RETURN ';'
     ;
 
 RestoIf : ELSE Cmd

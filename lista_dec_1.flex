@@ -29,6 +29,7 @@ NL  = \n | \r | \r\n
 
 "func"	  { return Parser.FUNC; }
 "void"    { return Parser.VOID; }
+"return" { return Parser.RETURN; }
 
 "&&" { return Parser.AND; }
 "||" { return Parser.OR; }
