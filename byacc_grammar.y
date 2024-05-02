@@ -4,9 +4,16 @@
 
 
 %token INT DOUBLE BOOLEAN VOID FUNC WHILE IF ELSE num ident
+%token AND OR NOT EQ NEQ LT LE GT GE
 
+%left OR
+%left AND
+%left EQ NEQ
+%left LT GT
+%left LE GE
 %left '+' '-'
 %left '*' '/'
+%right NOT
 
 %%
 
@@ -73,19 +80,28 @@ RestoIf : ELSE Cmd
         |
         ;
 
-E : E '+' T
-  | E '-' T
+E : E OR E
+  | E AND E
+  | E EQ E
+  | E NEQ E
+  | E LT E
+  | E GT E
+  | E LE E
+  | E GE E
+  | E '+' E
+  | E '-' E
   | T
   ;
 
-T : T '*' F
-  | T '/' F
+T : T '*' T
+  | T '/' T
   | F
   ;
 
-F : ident
+F : '(' E ')'
+  | NOT F
+  | ident
   | num
-  | '(' E ')'
   ;
 
 %%

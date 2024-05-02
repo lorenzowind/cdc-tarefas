@@ -30,6 +30,16 @@ NL  = \n | \r | \r\n
 "func"	  { return Parser.FUNC; }
 "void"    { return Parser.VOID; }
 
+"&&" { return Parser.AND; }
+"||" { return Parser.OR; }
+"!"  { return Parser.NOT; }
+"==" { return Parser.EQ; }
+"!=" { return Parser.NEQ; }
+"<"  { return Parser.LT; }
+">"  { return Parser.GT; }
+"<=" { return Parser.LE; }
+">=" { return Parser.GE; }
+
 [0-9]+ { return Parser.num;}
 [a-zA-Z][a-zA-Z0-9]* { return Parser.ident;}
 
@@ -43,7 +53,7 @@ NL  = \n | \r | \r\n
 "-" |
 "*" |
 "/" |
-"="    { return yytext().charAt(0); } 
+"="    { return yytext().charAt(0); }
 
 [ \t]+ { }
 {NL}+  { }
