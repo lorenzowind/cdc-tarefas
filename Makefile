@@ -2,7 +2,7 @@
 # byacc/j from http://troi.lincom-asg.com/~rjamison/byacc/
 
 JFLEX  = java -jar jflex.jar
-BYACCJ = ./yacc.linux -tv -J
+BYACCJ = ./yacc.exe -tv -J
 JAVAC  = javac
 
 # targets:
@@ -23,5 +23,5 @@ Parser.class: Yylex.java Parser.java
 Yylex.java: lista_dec_1.flex
 	$(JFLEX) lista_dec_1.flex
 
-Parser.java: byacc_grammar.y Yylex.java
-	$(BYACCJ) byacc_grammar.y
+Parser.java: lista_dec_1_byacc.y Yylex.java
+	$(BYACCJ) lista_dec_1_byacc.y

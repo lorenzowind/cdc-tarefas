@@ -1,19 +1,33 @@
 Prog --> ListaDecl
 
-ListaDecl --> DeclVar ListaDecl
-            | DeclFun ListaDecl
+ListaDecl --> Decl
             | vazio
 
+Decl --> DeclVar ListaDecl
+       | DeclFun ListaDecl
+       | DeclIndex ListaDecl
+
 DeclVar --> Tipo ListaIdent ';'
-          | vazio
+
+DeclIndex --> Tipo DeclMultIndex ListaIdent ';'
+
+DeclMultIndex --> '[' ']' '[' ']' 
+                | '[' ']'
 
 Tipo --> int | double | boolean
 
 ListaIdent --> IDENT , ListaIdent  
              | IDENT      
 
-DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' '{' DeclVar ListaCmd '}'
-          | vazio
+DeclFun --> FUNC tipoOuVoid IDENT '(' FormalPar ')' Bloco
+
+Bloco --> '{' DeclVarOpt ListaCmdOpt '}'
+
+DeclVarOpt --> DeclVar ListaDecl
+             | vazio
+
+ListaCmdOpt --> ListaCmd
+              | vazio
 
 TipoOuVoid --> Tipo | VOID
 
@@ -23,27 +37,49 @@ FormalPar --> ParamList
 ParamList --> Tipo IDENT , ParamList
             | Tipo IDENT
 
-Bloco --> { ListaCmd }
-
 ListaCmd --> Cmd ListaCmd
            | vazio
 
 Cmd --> Bloco
-      | while ( E ) Cmd
-      | IDENT = E ;
-      | if ( E ) Cmd RestoIf
+      | WHILE '(' E ')' Cmd
+      | ident '=' E ';'
+      | ident NumIndex '=' E ';'
+      | IF '(' E ')' Cmd RestoIf
+      | RETURN E ';'
+      | RETURN ';'
+      | FuncCall ';'
+
+NumIndex --> '[' num ']' '[' num ']' 
+           | '[' num ']' 
 
 RestoIf --> else Cmd
           | vazio
+          
+FuncCall --> ident '(' ExprList ')'
 
-E --> E + T
-    | E - T
+ExprList --> E ',' ExprList
+           | E
+           | vazio
+
+E --> E OR E
+    | E AND E
+    | E EQ E
+    | E NEQ E
+    | E LT E
+    | E GT E
+    | E LE E
+    | E GE E
+    | E '+' E
+    | E '-' E
     | T
 
-T --> T * F
-    | T / F
-    | F    
+T --> T '*' T
+    | T '/' T
+    | F
 
-F --> IDENT
-    | NUM
-    | ( E )
+F --> '(' E ')'
+    | NOT F
+    | ident
+    | ident NumIndex
+    | num
+    | FuncCall

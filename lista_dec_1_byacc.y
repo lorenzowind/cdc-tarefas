@@ -2,19 +2,18 @@
   import java.io.*;
 %}
 
-
 %token INT DOUBLE BOOLEAN VOID FUNC WHILE IF ELSE num ident
 %token AND OR NOT EQ NEQ LT LE GT GE
 %token RETURN
 
-%left OR
 %left AND
-%left EQ NEQ
-%left LT GT
-%left LE GE
+%left OR
+%right NOT
+%right EQ NEQ
+%nonassoc LT GT
+%nonassoc LE GE
 %left '+' '-'
 %left '*' '/'
-%right NOT
 
 %%
 
@@ -33,15 +32,16 @@ Decl : DeclVar ListaDecl
 DeclVar : Tipo ListaIdent ';'
         ;
 
-DeclIndex : Tipo '[' ']' ListaIdent ';'
+DeclIndex : Tipo DeclMultIndex ListaIdent ';'
           ;
 
+DeclMultIndex : '[' ']' '[' ']' 
+              | '[' ']' 
+              ;
 Tipo : INT
      | DOUBLE
      | BOOLEAN
      ;
-
-
 
 ListaIdent : ident ',' ListaIdent
            | ident
@@ -80,12 +80,16 @@ ListaCmd : Cmd ListaCmd
 Cmd : Bloco
     | WHILE '(' E ')' Cmd
     | ident '=' E ';'
-    | ident '[' num ']' '=' E ';'
+    | ident NumIndex '=' E ';'
     | IF '(' E ')' Cmd RestoIf
     | RETURN E ';'
     | RETURN ';'
     | FuncCall ';'
     ;
+
+NumIndex : '[' num ']' '[' num ']' 
+         | '[' num ']' 
+         ;
 
 RestoIf : ELSE Cmd
         |
@@ -120,7 +124,7 @@ T : T '*' T
 F : '(' E ')'
   | NOT F
   | ident
-  | ident '[' num ']'
+  | ident NumIndex
   | num
   | FuncCall
   ;
@@ -128,7 +132,6 @@ F : '(' E ')'
 %%
 
   private Yylex lexer;
-
 
   private int yylex () {
     int yyl_return = -1;
@@ -142,23 +145,19 @@ F : '(' E ')'
     return yyl_return;
   }
 
-
   public void yyerror (String error) {
     System.err.println ("Error: " + error);
   }
 
-
   public Parser(Reader r) {
     lexer = new Yylex(r, this);
   }
-
 
   static boolean interactive;
 
   public void setDebug(boolean debug) {
     yydebug = debug;
   }
-
 
   public static void main(String args[]) throws IOException {
     System.out.println("");

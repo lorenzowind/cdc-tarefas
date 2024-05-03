@@ -29,7 +29,7 @@ NL  = \n | \r | \r\n
 
 "func"	  { return Parser.FUNC; }
 "void"    { return Parser.VOID; }
-"return" { return Parser.RETURN; }
+"return"  { return Parser.RETURN; }
 
 "&&" { return Parser.AND; }
 "||" { return Parser.OR; }
@@ -41,7 +41,7 @@ NL  = \n | \r | \r\n
 "<=" { return Parser.LE; }
 ">=" { return Parser.GE; }
 
-[0-9]+ { return Parser.num;}
+[0-9]+               { return Parser.num;}
 [a-zA-Z][a-zA-Z0-9]* { return Parser.ident;}
 
 "{" |
@@ -56,9 +56,9 @@ NL  = \n | \r | \r\n
 "/" |
 "[" |
 "]" |
-"="    { return yytext().charAt(0); }
+"="   { return yytext().charAt(0); }
 
 [ \t]+ { }
 {NL}+  { }
 
-.    { System.err.println("Error: unexpected character '"+yytext()+"' na linha "+yyline); return YYEOF; }
+. { System.err.println("Error: unexpected character '"+yytext()+"' na linha "+yyline); return YYEOF; }
