@@ -1,5 +1,0 @@
-$TRACE_ON
-func void test() {
-    b = foo();
-    b = foo() + batata;
-}

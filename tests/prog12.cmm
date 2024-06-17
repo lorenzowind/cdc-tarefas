@@ -1,7 +1,0 @@
-func int foo(int i, int j) {
-    if (i) {
-
-    } else while(a) {
-
-    }
-}

@@ -1,5 +1,0 @@
-func void test() {
-    if (1 == 2 && 2 == 3) {
-        return e;
-    }
-}

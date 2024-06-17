@@ -9,6 +9,7 @@
   public Yylex(java.io.Reader r, Parser yyparser) {
     this(r);
     this.yyparser = yyparser;
+    yyline = 1;
   }
 %}
 
@@ -18,6 +19,7 @@ NL  = \n | \r | \r\n
 
 "$TRACE_ON"  { yyparser.setDebug(true);  }
 "$TRACE_OFF" { yyparser.setDebug(false); }
+"$MOSTRA_TS" { yyparser.listarTS(); }
 
 "while"	  { return Parser.WHILE; }
 "if"		  { return Parser.IF; }
@@ -41,8 +43,8 @@ NL  = \n | \r | \r\n
 "<=" { return Parser.LE; }
 ">=" { return Parser.GE; }
 
-[0-9]+               { return Parser.num;}
-[a-zA-Z][a-zA-Z0-9]* { return Parser.ident;}
+[0-9]+               { return Parser.num; }
+[a-zA-Z][a-zA-Z0-9]* { return Parser.ident; }
 
 "{" |
 "}" |

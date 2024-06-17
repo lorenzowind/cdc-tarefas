@@ -1,3 +1,0 @@
-func int Test (int a, int b){
-    a = a * 1;
-}
