@@ -43,11 +43,11 @@ public class TS_entry
   }
 
   public String tipo2str(TS_entry tipo) {
-    if (tipo == null) return "null"; 
-    else if (tipo==Parser.Tp_INT)    return "int"; 
-    else if (tipo==Parser.Tp_BOOL)   return "boolean"; 
-    else if (tipo==Parser.Tp_DOUBLE) return "double";
-    else if (tipo==Parser.Tp_ERRO)   return  "_erro_";
+    if (getTipo() == null) return "null"; 
+    else if (getTipo()==Parser.Tp_INT)    return "int"; 
+    else if (getTipo()==Parser.Tp_BOOL)   return "boolean"; 
+    else if (getTipo()==Parser.Tp_DOUBLE) return "double";
+    else if (getTipo()==Parser.Tp_ERRO)   return  "_erro_";
     else                             return "erro/tp";
   }
 }

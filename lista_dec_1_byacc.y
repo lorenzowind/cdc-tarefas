@@ -21,13 +21,14 @@
 %type <obj> E
 %type <obj> T
 %type <obj> F
+%type <obj> lvalue
 
 %%
 
-Prog : { currClass = ClasseID.VarGlobal; } ListaDecl
+Prog : ListaDecl
      ;
 
-ListaDecl : Decl
+ListaDecl : { currClass = ClasseID.VarGlobal; } Decl
           |
           ;
 
@@ -54,16 +55,18 @@ Tipo : INT     { $$ = Tp_INT; }
 ListaIdent : ident ',' ListaIdent { TS_entry nodo = ts.pesquisa($1);
                                     if (nodo != null) 
                                       yyerror("(sem) variavel >" + $1 + "< jah declarada");
-                                    else ts.insert(new TS_entry($1, currentType, currClass)); 
+                                    else
+                                      ts.insert(new TS_entry($1, currentType, currClass)); 
                                   }
-           | ident {  TS_entry nodo = ts.pesquisa($1);
-                      if (nodo != null) 
-                        yyerror("(sem) variavel >" + $1 + "< jah declarada");
-                      else ts.insert(new TS_entry($1, currentType, currClass)); 
-                   }
+           | ident                { TS_entry nodo = ts.pesquisa($1);
+                                    if (nodo != null) 
+                                      yyerror("(sem) variavel >" + $1 + "< jah declarada");
+                                    else 
+                                      ts.insert(new TS_entry($1, currentType, currClass)); 
+                                  }
            ;
 
-DeclFun : FUNC TipoOuVoid ident '(' FormalPar ')' Bloco
+DeclFun : FUNC TipoOuVoid ident { currClass = ClasseID.VarLocal; } '(' FormalPar ')' Bloco
         ;
 
 Bloco : '{' DeclVarOpt ListaCmdOpt '}'
@@ -90,11 +93,11 @@ ParamList : Tipo ident ',' ParamList {  TS_entry nodo = ts.pesquisa($2);
                                           yyerror("(sem) variavel >" + $2 + "< jah declarada");
                                         else ts.insert(new TS_entry($2, (TS_entry)$1, currClass)); 
                                      }
-          | Tipo ident {  TS_entry nodo = ts.pesquisa($2);
-                          if (nodo != null) 
-                            yyerror("(sem) variavel >" + $2 + "< jah declarada");
-                          else ts.insert(new TS_entry($2, (TS_entry)$1, currClass)); 
-                       }
+          | Tipo ident               {  TS_entry nodo = ts.pesquisa($2);
+                                        if (nodo != null) 
+                                          yyerror("(sem) variavel >" + $2 + "< jah declarada");
+                                        else ts.insert(new TS_entry($2, (TS_entry)$1, currClass)); 
+                                     }
           ;
 
 ListaCmd : Cmd ListaCmd
@@ -102,11 +105,10 @@ ListaCmd : Cmd ListaCmd
          ;
 
 Cmd : Bloco
-    | WHILE '(' E ')' Cmd { if (((TS_entry)$3) != Tp_BOOL) 
-                              yyerror("(sem) expressão (if) deve ser lógica "+((TS_entry)$3).getTipo());
-                          }
-    | ident '=' E ';'
-    | ident NumIndex '=' E ';'
+    | WHILE '(' E ')' Cmd       { if (((TS_entry)$3) != Tp_BOOL) 
+                                    yyerror("(sem) expressão (while) deve ser lógica "+((TS_entry)$3).getTipo());
+                                }
+    | lvalue '=' E ';'          
     | IF '(' E ')' Cmd RestoIf  { if (((TS_entry)$3) != Tp_BOOL) 
                                     yyerror("(sem) expressão (if) deve ser lógica "+((TS_entry)$3).getTipo());
                                 }
@@ -114,6 +116,24 @@ Cmd : Bloco
     | RETURN ';'
     | FuncCall ';'
     ;
+
+lvalue : ident          { TS_entry nodo = ts.pesquisa($1);
+                          if (nodo == null) {
+                            yyerror("(sem) var <" + $1 + "> nao declarada"); 
+                            $$ = Tp_ERRO;    
+                          }           
+                          else
+                            $$ = nodo.getTipo();
+                        } 
+       | ident NumIndex { TS_entry nodo = ts.pesquisa($1);
+                          if (nodo == null) {
+                            yyerror("(sem) var <" + $1 + "> nao declarada"); 
+                            $$ = Tp_ERRO;    
+                          }           
+                          else
+                            $$ = nodo.getTipo();
+                        }
+       ;
 
 NumIndex : '[' num ']' '[' num ']' 
          | '[' num ']' 
@@ -149,11 +169,25 @@ T : T '*' T { $$ = validaTipo('*', (TS_entry)$1, (TS_entry)$3); }
   | F       { $$ = $1; }
   ;
 
-F : '(' E ')'      { $$ = $2; }
-  | NOT F          { $$ = validaTipo(NOT, (TS_entry)$2); }
-  | ident          { $$ = $1; }
-  | ident NumIndex { $$ = $1; }
-  | num            { $$ = Tp_INT; }
+F : '(' E ')'      {  $$ = $2; }
+  | NOT F          {  $$ = validaTipo(NOT, (TS_entry)$2); }
+  | ident          {  TS_entry nodo = ts.pesquisa($1);
+                      if (nodo == null) {
+                        yyerror("(sem) var <" + $1 + "> nao declarada"); 
+                        $$ = Tp_ERRO;    
+                      }           
+                      else
+                        $$ = nodo.getTipo();
+                   } 
+  | ident NumIndex {  TS_entry nodo = ts.pesquisa($1);
+                      if (nodo == null) {
+                        yyerror("(sem) var <" + $1 + "> nao declarada"); 
+                        $$ = Tp_ERRO;    
+                      }           
+                      else
+                        $$ = nodo.getTipo();
+                   }
+  | num            {  $$ = Tp_INT; }
   | FuncCall
   ;
 
@@ -164,9 +198,11 @@ F : '(' E ')'      { $$ = $2; }
   private TabSimb ts;
 
   public static TS_entry Tp_INT =  new TS_entry("int", null, ClasseID.TipoBase);
-  public static TS_entry Tp_DOUBLE = new TS_entry("double", null,  ClasseID.TipoBase);
+  public static TS_entry Tp_DOUBLE = new TS_entry("double", null, ClasseID.TipoBase);
   public static TS_entry Tp_BOOL = new TS_entry("bool", null,  ClasseID.TipoBase);
   public static TS_entry Tp_ERRO = new TS_entry("_erro_", null,  ClasseID.TipoBase);
+  
+  public static final int ATRIB = 1600;
 
   private ClasseID currClass;
   private TS_entry currentType;
@@ -231,7 +267,7 @@ F : '(' E ')'      { $$ = $2; }
 
   TS_entry validaTipo(int operador, TS_entry A, TS_entry B) {  
     switch (operador) {
-      case '=':
+      case ATRIB:
         if ((A == Tp_INT && B == Tp_INT)
           || ((A == Tp_DOUBLE && (B == Tp_INT || B == Tp_DOUBLE))) 
           || ((A == Tp_BOOL && B == Tp_BOOL)) 
@@ -250,27 +286,27 @@ F : '(' E ')'      { $$ = $2; }
           || (B == Tp_DOUBLE && (A == Tp_INT || A == Tp_DOUBLE))) 
           return Tp_DOUBLE;     
         else
-          yyerror("(sem) tipos incomp. para soma: "+ A.getTipoStr() + " + "+B.getTipoStr());
+          yyerror("(sem) tipos incomp. para soma: "+ A.getTipoStr() + " : "+B.getTipoStr());
         break;
       case EQ:
       case NEQ:
-      case '>':
-      case '<':
+      case GT:
+      case LT:
       case LE:
       case GE:
         if ((A == Tp_INT || A == Tp_DOUBLE) && (B == Tp_INT || B == Tp_DOUBLE))
           return Tp_BOOL;
         else
-          yyerror("(sem) tipos incomp. para op relacional: "+ A.getTipoStr() + " > "+B.getTipoStr());
+          yyerror("(sem) tipos incomp. para op relacional: "+ A.getTipoStr() + " : "+B.getTipoStr());
         break;
       case AND:
       case OR:
         if (A == Tp_BOOL && B == Tp_BOOL)
           return Tp_BOOL;
         else
-          yyerror("(sem) tipos incomp. para op lógica: "+ A.getTipoStr() + " && "+B.getTipoStr());
+          yyerror("(sem) tipos incomp. para op lógica: "+ A.getTipoStr() + " : "+B.getTipoStr());
         break;
-      }
+    }
     return Tp_ERRO; 
   }
 
@@ -282,6 +318,6 @@ F : '(' E ')'      { $$ = $2; }
         else
           yyerror("(sem) tipos incomp. para op lógica: "+ A.getTipoStr());
         break;
-      }
+    }
     return Tp_ERRO; 
   }

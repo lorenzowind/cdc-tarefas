@@ -43,8 +43,12 @@ NL  = \n | \r | \r\n
 "<=" { return Parser.LE; }
 ">=" { return Parser.GE; }
 
-[0-9]+               { return Parser.num; }
-[a-zA-Z][a-zA-Z0-9]* { return Parser.ident; }
+[0-9]+               {  yyparser.yylval = new ParserVal(Integer.parseInt(yytext()));
+                        return Parser.num; 
+                     }
+[a-zA-Z][a-zA-Z0-9]* {  yyparser.yylval = new ParserVal(yytext());
+                        return Parser.ident; 
+                     }
 
 "{" |
 "}" |

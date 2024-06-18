@@ -1,0 +1,5 @@
+func void Test (double a, int b){
+  while (a < b) {
+    a = a + 1;
+  }
+}

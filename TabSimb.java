@@ -23,7 +23,6 @@ public class TabSimb
   }
       
   public TS_entry pesquisa(String umId) {
-    listar();
     for (TS_entry nodo : lista) {
       if (nodo.getId().equals(umId)) {
         return nodo;
